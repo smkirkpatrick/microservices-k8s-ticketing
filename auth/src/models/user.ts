@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { Password } from '../services/password';
 
 // This Mongoose Model represents the entire user
 // collection in mongodb.
@@ -33,6 +34,19 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+userSchema.pre('save', async function (done) {
+  // ^ have to use the 'function(done)' syntax to preserve use
+  // of 'this' as the User document. Using an arrow func '(done) =>'
+  // would clobber 'this' and set it to the current context.
+  if (this.isModified('password')) {
+    const hashed = await Password.toHash(this.get('password'));
+    this.set('password', hashed);
+  }
+
+  done(); // have to call for mongo to continue
+});
+
 userSchema.statics.build = (attrs: UserAttrs) => {
   return new User(attrs);
 };
