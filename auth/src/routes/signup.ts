@@ -41,7 +41,7 @@ router.post(
         id: user.id,
         email: user.email,
       },
-      'asdf'
+      process.env.JWT_KEY! // ! indicates to typescript to ignore this var
     );
 
     // Store it on session object

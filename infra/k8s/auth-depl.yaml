@@ -16,6 +16,12 @@ spec:
         - name: auth
           image: smkirkpatrick/ticketing/auth
           # image: us.gcr.io/microservices-k8s-ticketing/auth
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service
