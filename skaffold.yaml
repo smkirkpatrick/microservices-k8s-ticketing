@@ -19,3 +19,12 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: smkirkpatrick/ticketing-client
+      # - image: us.gcr.io/microservices-k8s-ticketing/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
+            dest: .
