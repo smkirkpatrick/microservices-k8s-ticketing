@@ -1,3 +1,6 @@
+# Ignore @smkirkpatrick-ticketing/common npm module
+common/
+
 # Logs
 logs
 *.log
