@@ -17,7 +17,11 @@ const LandingPage = ({ currentUser }) => {
 // can only be used within a React component from the client.
 // getInitialProps() *is still called* from within the browser when navigating
 // from one page to another while in the app (SPA).
+
+// Page-level getInitialProps no longer get invoked when getInitialProps is
+// used at the Custom App level (_app.js)
 LandingPage.getInitialProps = async (context) => {
+  console.log('LANDING PAGE!');
   const client = buildClient(context);
   const { data } = await client.get('/api/users/currentuser');
   return data;
