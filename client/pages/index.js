@@ -1,4 +1,4 @@
-import axios from 'axios';
+import buildClient from '../api/build-client';
 
 // Can only use the useRequest "hook" from within a React component and cannot
 // do so during server-side rendering of component.
@@ -14,31 +14,10 @@ const LandingPage = ({ currentUser }) => {
 // can only be used within a React component from the client.
 // getInitialProps() *is still called* from within the browser when navigating
 // from one page to another while in the app (SPA).
-LandingPage.getInitialProps = async ({ req }) => {
-  // Need to reach across k8s Namespace to reach the ingress-nginx namespace
-  // from our "default" namespace
-  // Format: http://<service>.<namespace>.svc.cluster.local
-  // We could use an External Name Service k8s object, but we will not for now.
-  if (typeof window === 'undefined') {
-    // We are on the server!
-    // Send requests to ingress-nginx.
-    // Must set the Host header so that the nginx routing rules can kick
-    // in for the intra-service request to the ingress-nginx namespace
-    // resource.
-    const { data } = await axios.get(
-      'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local/api/users/currentuser',
-      {
-        headers: req.headers,
-      }
-    );
-    return data;
-  } else {
-    // We are on the browser!
-    // Naked requests to our api will work.
-    const { data } = await axios.get('/api/users/currentuser');
-    return data;
-  }
-  return {};
+LandingPage.getInitialProps = async (context) => {
+  const client = buildClient(context);
+  const { data } = await client.get('/api/users/currentuser');
+  return data;
 };
 
 export default LandingPage;
