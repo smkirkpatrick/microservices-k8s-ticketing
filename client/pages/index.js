@@ -6,8 +6,11 @@ import buildClient from '../api/build-client';
 // any lifecycle events and can't wait for external requests to resolve. That's
 // why all server-side data MUST be fetched first from getInitialProps()
 const LandingPage = ({ currentUser }) => {
-  console.log(currentUser);
-  return <h1>Landing Page</h1>;
+  return currentUser ? (
+    <h1>You are signed in</h1>
+  ) : (
+    <h1>You are NOT signed in</h1>
+  );
 };
 
 // Have to use axios directly because this is a plain function, useRequest hook
