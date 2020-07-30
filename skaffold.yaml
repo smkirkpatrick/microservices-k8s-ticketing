@@ -10,7 +10,7 @@ build:
   #googleCloudBuild:
   #  projectId: microservices-k8s-ticketing
   artifacts:
-    - image: smkirkpatrick/ticketing/auth
+    - image: smkirkpatrick/ticketing-auth
       # - image: us.gcr.io/microservices-k8s-ticketing/auth
       context: auth
       docker:
@@ -27,4 +27,13 @@ build:
       sync:
         manual:
           - src: '**/*.js'
+            dest: .
+    - image: smkirkpatrick/ticketing-tickets
+      # - image: us.gcr.io/microservices-k8s-ticketing/tickets
+      context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
             dest: .
