@@ -1,5 +1,13 @@
 # Ticketing microservices toy project
 
+## Bring online from scratch
+
+```
+$ kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/cloud/deploy.yaml
+$ skaffold dev
+```
+
 ## Docker cleanup
 
 ```
