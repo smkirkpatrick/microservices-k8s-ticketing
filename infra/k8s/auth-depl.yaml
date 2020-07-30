@@ -14,9 +14,11 @@ spec:
     spec:
       containers:
         - name: auth
-          image: smkirkpatrick/ticketing/auth
+          image: smkirkpatrick/ticketing-auth
           # image: us.gcr.io/microservices-k8s-ticketing/auth
           env:
+            - name: MONGO_URI
+              value: 'mongodb://auth-mongo-srv:27017/auth'
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:
