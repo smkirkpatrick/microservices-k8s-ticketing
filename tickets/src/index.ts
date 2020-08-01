@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { natsWrapper } from './nats-wrapper';
 
 import { app } from './app';
 
@@ -11,6 +12,19 @@ const start = async () => {
   }
 
   try {
+    console.log('Establish connection to NATS...');
+    await natsWrapper.connect('ticketing', 'laskdfj', 'http://nats-srv:4222');
+    // ^ clusterId is defined by the -cid param in the nats-depl.yaml
+
+    natsWrapper.client.on('close', () => {
+      console.log('NATS connection closed!');
+      process.exit();
+    });
+
+    process.on('SIGINT', () => natsWrapper.client.close());
+    process.on('SIGTERM', () => natsWrapper.client.close());
+
+    console.log('Establish connection to Mongo...');
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
