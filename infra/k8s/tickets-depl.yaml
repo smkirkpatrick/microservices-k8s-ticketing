@@ -17,6 +17,15 @@ spec:
           image: smkirkpatrick/ticketing-tickets
           # image: us.gcr.io/microservices-k8s-ticketing/tickets
           env:
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            # ^ Use the random name of the pod as the client id for NATS
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID
+              value: ticketing
             - name: MONGO_URI
               value: 'mongodb://tickets-mongo-srv:27017/tickets'
             - name: JWT_KEY
