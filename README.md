@@ -1,5 +1,15 @@
 # Ticketing microservices toy project
 
+## Need to implement in actual project
+
+Course project does not implement a solution for ensuring data consistency between service database and published events. If a service will be publishing events that can not be lost (such as monetary transactions), additional robustness will be needed.
+
+Events that need to be published should be written to a separate journal (database table / SQS queue / somewhere). The event content should be included as well as a status (i.e. Sent?). Some external process or part of the service should then be responsible for processing this event journal to ensure that the event is successfully published. Q: How to scale that event processing? Limited to a single process unless it is somehow safe to have multiple processes pulled pending events to publish to NATS...
+
+For immutable records (like a transaction), could potentially include a `published_at` field on the record to help cut down on duplicate data being saved to the db. However, for a mutable entity - such as a `post` that can be edited or updated - a separate record for each event would be needed if each change needs to be published to ensure consistent behavior elsewhere in the platform. The events become an audit trail of sorts for changes made to an entity over time.
+
+Ref: [Handling Publish Failures](https://www.udemy.com/course/microservices-with-node-js-and-react/learn/lecture/19485352#questions)
+
 ## Bring online from scratch
 
 ```
