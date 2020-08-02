@@ -12,6 +12,16 @@ Ref: [Handling Publish Failures](https://www.udemy.com/course/microservices-with
 
 ## Bring online from scratch
 
+Best to build and push the individual service images to your id on docker hub:
+
+```
+$ cd auth
+$ docker build -t smkirkpatrick/ticketing-auth .
+$ docker push smkirkpatrick/ticketing-auth
+```
+
+Rinse and repeat for each service.
+
 ```
 $ kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/cloud/deploy.yaml

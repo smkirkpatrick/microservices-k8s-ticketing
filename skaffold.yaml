@@ -37,3 +37,12 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: smkirkpatrick/ticketing-orders
+      # - image: us.gcr.io/microservices-k8s-ticketing/orders
+      context: orders
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
