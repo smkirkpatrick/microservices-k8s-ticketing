@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { natsWrapper } from './nats-wrapper';
+import { TicketCreatedListener } from './events/listeners/ticket-created-listener';
+import { TicketUpdateListener } from './events/listeners/ticket-updated-listener';
 
 import { app } from './app';
 
@@ -44,6 +46,9 @@ const start = async () => {
       useCreateIndex: true,
     });
     console.log('Connected to MongoDb');
+
+    new TicketCreatedListener(natsWrapper.client).listen();
+    new TicketUpdateListener(natsWrapper.client).listen();
   } catch (err) {
     console.error(err);
   }
