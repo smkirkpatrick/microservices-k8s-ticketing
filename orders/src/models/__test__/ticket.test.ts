@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 import { Ticket } from '../ticket';
-import { Order } from '../order';
-import { OrderStatus } from '@smkirkpatrick-ticketing/common';
 
 it('implements optimistic concurrency control', async (done) => {
   // Create an instance of a ticket
@@ -15,22 +13,13 @@ it('implements optimistic concurrency control', async (done) => {
   // Save the ticket to the database
   await ticket.save();
 
-  // Create an order for the ticket
-  const order = Order.build({
-    userId: '123',
-    status: OrderStatus.Created,
-    expiresAt: new Date(),
-    ticket,
-  });
-  await order.save();
-
-  // fetch the order twice
-  const firstInstance = await Order.findById(order.id);
-  const secondInstance = await Order.findById(order.id);
+  // fetch the ticket twice
+  const firstInstance = await Ticket.findById(ticket.id);
+  const secondInstance = await Ticket.findById(ticket.id);
 
   // make two separate changes to the tickets we fetched
-  firstInstance!.set({ status: OrderStatus.AwaitingPayment });
-  secondInstance!.set({ status: OrderStatus.Cancelled });
+  firstInstance!.set({ price: 10, version: 1 });
+  secondInstance!.set({ price: 15, version: 1 });
 
   // save the first fetched ticket - should work
   await firstInstance!.save();
@@ -53,20 +42,15 @@ it('increments the version number on multiple saves', async () => {
     price: 20,
     version: 0,
   });
+
   await ticket.save();
+  expect(ticket.version).toEqual(0);
 
-  const order = Order.build({
-    userId: '123',
-    status: OrderStatus.Created,
-    expiresAt: new Date(),
-    ticket,
-  });
-  await order.save();
-  expect(order.version).toEqual(0);
+  ticket.set({ price: 25, version: 1 });
+  await ticket.save();
+  expect(ticket.version).toEqual(1);
 
-  await order.save();
-  expect(order.version).toEqual(1);
-
-  await order.save();
-  expect(order.version).toEqual(2);
+  ticket.set({ price: 30, version: 2 });
+  await ticket.save();
+  expect(ticket.version).toEqual(2);
 });
