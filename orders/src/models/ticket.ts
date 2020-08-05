@@ -6,7 +6,6 @@ interface TicketAttrs {
   id: string;
   title: string;
   price: number;
-  version: number;
 }
 
 export interface TicketDoc extends mongoose.Document {
@@ -47,8 +46,8 @@ const ticketSchema = new mongoose.Schema(
 );
 
 ticketSchema.set('versionKey', 'version'); // use 'version' instead of default '__v'
-// ticketSchema.plugin(updateIfCurrentPlugin);
-
+ticketSchema.plugin(updateIfCurrentPlugin);
+/*
 ticketSchema.pre('save', function (done) {
   // 'this' === the document
   // @ts-ignore
@@ -60,13 +59,13 @@ ticketSchema.pre('save', function (done) {
 
   done();
 });
+*/
 
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
   return new Ticket({
     _id: attrs.id,
     title: attrs.title,
     price: attrs.price,
-    version: attrs.version,
   });
 };
 

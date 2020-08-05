@@ -7,7 +7,6 @@ it('implements optimistic concurrency control', async (done) => {
     id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 5,
-    version: 0,
   });
 
   // Save the ticket to the database
@@ -18,8 +17,8 @@ it('implements optimistic concurrency control', async (done) => {
   const secondInstance = await Ticket.findById(ticket.id);
 
   // make two separate changes to the tickets we fetched
-  firstInstance!.set({ price: 10, version: 1 });
-  secondInstance!.set({ price: 15, version: 1 });
+  firstInstance!.set({ price: 10 });
+  secondInstance!.set({ price: 15 });
 
   // save the first fetched ticket - should work
   await firstInstance!.save();
@@ -40,17 +39,14 @@ it('increments the version number on multiple saves', async () => {
     id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 20,
-    version: 0,
   });
 
   await ticket.save();
   expect(ticket.version).toEqual(0);
 
-  ticket.set({ price: 25, version: 1 });
   await ticket.save();
   expect(ticket.version).toEqual(1);
 
-  ticket.set({ price: 30, version: 2 });
   await ticket.save();
   expect(ticket.version).toEqual(2);
 });
