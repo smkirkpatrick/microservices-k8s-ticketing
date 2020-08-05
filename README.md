@@ -10,6 +10,10 @@ For immutable records (like a transaction), could potentially include a `publish
 
 Ref: [Handling Publish Failures](https://www.udemy.com/course/microservices-with-node-js-and-react/learn/lecture/19485352#questions)
 
+### Database
+
+*Optimistic Concurrency Control* for versioning records automatically.
+
 ## Bring online from scratch
 
 Best to build and push the individual service images to your id on docker hub:
