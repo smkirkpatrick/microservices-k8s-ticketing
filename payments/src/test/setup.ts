@@ -12,6 +12,13 @@ declare global {
 
 jest.mock('../nats-wrapper');
 
+// To run tests against the Stripe test env:
+// 1. add STRIPE_KEY here, or build out in env variable
+// 2. Rename src/__mocks__/stripe.ts to src/__mocks__/stripe.ts.old
+// 3. Comment out any mock lines for stripe:
+//    // jest.mock('../../stripe');
+process.env.STRIPE_KEY = '';
+
 let mongo: any;
 beforeAll(async () => {
   process.env.JWT_KEY = 'asdfef';
