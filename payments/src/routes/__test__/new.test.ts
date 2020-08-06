@@ -3,6 +3,7 @@ import { app } from '../../app';
 import mongoose from 'mongoose';
 import { Order, OrderStatus } from '../../models/order';
 import { stripe } from '../../stripe';
+import { Payment } from '../../models/payment';
 
 // jest.mock('../../stripe');
 
@@ -94,4 +95,11 @@ it('returns a 204 with valid inputs', async () => {
   expect(stripeCharge).toBeDefined();
   expect(stripeCharge!.description).toEqual(order.id);
   expect(stripeCharge!.currency).toEqual('usd');
+
+  const payment = await Payment.findOne({
+    orderId: order.id,
+    stripeId: stripeCharge!.id,
+  });
+
+  expect(payment).not.toBeNull(); // findOne returns 'null' NOT 'undefined'
 });
