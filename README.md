@@ -28,6 +28,7 @@ Rinse and repeat for each service.
 
 ```
 $ kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
+$ kubectl create secret generic stripe-secret --from-literal STRIPE_KEY=<Stripe secret>
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/cloud/deploy.yaml
 $ skaffold dev
 ```

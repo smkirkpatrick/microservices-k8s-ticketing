@@ -55,3 +55,12 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: smkirkpatrick/ticketing-payments
+      # - image: us.gcr.io/microservices-k8s-ticketing/payments
+      context: payments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
