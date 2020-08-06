@@ -46,3 +46,12 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: smkirkpatrick/ticketing-expiration
+      # - image: us.gcr.io/microservices-k8s-ticketing/expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
