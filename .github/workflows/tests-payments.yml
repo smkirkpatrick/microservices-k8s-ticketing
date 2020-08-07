@@ -3,6 +3,9 @@ name: tests-payments
 on:
   pull_request
 
+env:
+  STRIPE_KEY: ${{ secrets.STRIPE_KEY }}
+  
 jobs:
   build:
     runs-on: ubuntu-latest
