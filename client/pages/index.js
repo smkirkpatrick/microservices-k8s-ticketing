@@ -3,11 +3,29 @@
 // The Component is rendered once on the server, but we don't have access to
 // any lifecycle events and can't wait for external requests to resolve. That's
 // why all server-side data MUST be fetched first from getInitialProps()
-const LandingPage = ({ currentUser }) => {
-  return currentUser ? (
-    <h1>You are signed in</h1>
-  ) : (
-    <h1>You are NOT signed in</h1>
+const LandingPage = ({ currentUser, tickets }) => {
+  const ticketList = tickets.map((ticket) => {
+    return (
+      <tr key={ticket.id}>
+        <td>{ticket.title}</td>
+        <td>{ticket.price}</td>
+      </tr>
+    );
+  });
+
+  return (
+    <div>
+      <h1>Tickets</h1>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>{ticketList}</tbody>
+      </table>
+    </div>
   );
 };
 
@@ -19,7 +37,9 @@ const LandingPage = ({ currentUser }) => {
 // Page-level getInitialProps no longer get invoked when getInitialProps is
 // used at the Custom App level (_app.js)
 LandingPage.getInitialProps = async (context, client, currentUser) => {
-  return {};
+  const { data } = await client.get('/api/tickets');
+
+  return { tickets: data };
 };
 
 export default LandingPage;
