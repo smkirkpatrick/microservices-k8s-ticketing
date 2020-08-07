@@ -10,6 +10,12 @@ For immutable records (like a transaction), could potentially include a `publish
 
 Ref: [Handling Publish Failures](https://www.udemy.com/course/microservices-with-node-js-and-react/learn/lecture/19485352#questions)
 
+### Digital Ocean Load Balancer
+
+There is a bug that needs to be worked around in the ingress-nginx manifest: [Digital Ocean Bug](https://github.com/digitalocean/digitalocean-cloud-controller-manager/blob/master/docs/controllers/services/examples/README.md#accessing-pods-over-a-managed-load-balancer-from-inside-the-cluster)
+
+Also, we did not set up this load balancer to use HTTPS and that will be required otherwise.
+
 ### Database
 
 *Optimistic Concurrency Control* for versioning records automatically.
@@ -31,6 +37,83 @@ $ kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
 $ kubectl create secret generic stripe-secret --from-literal STRIPE_KEY=<Stripe secret>
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/cloud/deploy.yaml
 $ skaffold dev
+```
+
+## CI/CD to Digital Ocean k8s Cluster
+
+Install `doctl` Digital Ocean cli tool:
+
+```
+$ brew install doctl
+```
+
+Visit [Applications & API](https://cloud.digitalocean.com/account/api/tokens?i=8d92cf) dashboard and generate a *Personal access token* to use to initialize the DO cli:
+
+```
+$ doctl auth init
+# Provide the PAT when prompted
+```
+
+Configure the Digital Ocean K8S Cluster configuration for `kubectl`:
+
+```
+$ doctl kubernetes cluster kubeconfig save ticketing
+# "ticketing" was the name that I gave my cluster
+```
+
+To list the Kubernetes contexts and switch from local docker for desktop to Digital Ocean cluster:
+
+```
+$ kubectl config view
+# Find the contexts section
+
+$ kubectl config use-context docker-desktop
+$ kubectl get pods # <- lists pods running on local machine
+
+# Switch to DO cluster context
+$ kubectl config use-context do-nyc1-ticketing
+$ kubectl get pods # <- lists pods running on Digital Ocean cluster 
+```
+
+Need to create the cluster secrets for the Digital Ocean cluster:
+
+```
+$ kubectl create secret generic stripe-secret --from-literal STRIPE_KEY=<stripe key>
+$ uuidgen
+7E8DEE10-A581-4895-B5CA-49F08E9808C7
+$ kubectl create secret generic jwt-secret --from-literal JWT_KEY=7E8DEE10-A581-4895-B5CA-49F08E9808C7
+```
+
+Need to deploy `ingress-nginx` to the Digital Ocean cluster:
+
+```
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/do/deploy.yaml
+```
+
+To check the logs for a pod:
+
+```
+$ kubectl get pods
+...
+auth-depl-5dbb64544-sb4n9   ...
+...
+$ kubectl logs auth-depl-5dbb64544-sb4n9
+```
+
+If a pod refuses to start up, there are a couple of ways to check what's going on:
+
+```
+$ kubectl describe pod client-depl-9bbdffbc8-8tv8s
+...
+Events:
+  Type    Reason     Age        From                           Message
+  ----    ------     ----       ----                           -------
+  Normal  Scheduled  <unknown>  default-scheduler              Successfully assigned default/client-depl-9bbdffbc8-8tv8s to pool-zra9w1j9k-3bi9i
+  Normal  Pulling    103s       kubelet, pool-zra9w1j9k-3bi9i  Pulling image "smkirkpatrick/ticketing-client"
+  Normal  Pulled     85s        kubelet, pool-zra9w1j9k-3bi9i  Successfully pulled image "smkirkpatrick/ticketing-client"
+  Normal  Created    85s        kubelet, pool-zra9w1j9k-3bi9i  Created container client
+  Normal  Started    85s        kubelet, pool-zra9w1j9k-3bi9i  Started container client
+$ kubectl logs client-depl-9bbdffbc8-8tv8s
 ```
 
 ## NATS test project
