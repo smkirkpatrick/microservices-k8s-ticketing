@@ -12,8 +12,7 @@ const buildClient = ({ req }) => {
     // in for the intra-service request to the ingress-nginx namespace
     // resource.
     return axios.create({
-      baseURL:
-        'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local',
+      baseURL: process.env.INGRESS_NGINX_URL,
       headers: req.headers,
     });
   } else {
