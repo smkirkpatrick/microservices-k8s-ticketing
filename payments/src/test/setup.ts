@@ -17,7 +17,7 @@ jest.mock('../nats-wrapper');
 // 2. Rename src/__mocks__/stripe.ts to src/__mocks__/stripe.ts.old
 // 3. Comment out any mock lines for stripe:
 //    // jest.mock('../../stripe');
-process.env.STRIPE_KEY = '';
+// process.env.STRIPE_KEY = '';
 
 let mongo: any;
 beforeAll(async () => {
